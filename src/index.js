@@ -10,12 +10,67 @@ const VIRT_HEIGHT = 900;
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
 
+fooLayer.style.backgroundImage = "url(http://www.allwhitebackground.com/images/2/2297.jpg)";
+fooLayer.style.backgroundSize = "cover";
+
 const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barTextRenderer = getTextRenderer(barLayer.getContext("2d"), barLayer);
 
 const eventListeners = getEventListeners();
 
+const makeAnt = () => {
+  let forcedUpdate = false;
+  const size = 1;
+  return {
 
+    drawSegment(ctx, trans, rot, flatten) {
+      ctx.save();
+      ctx.rotate(rot * Math.PI / 180);
+      ctx.translate(...trans);
+      ctx.beginPath();
+      ctx.scale(...flatten);
+      ctx.arc(90, 0, 80,  0, 2 * Math.PI, false);
+      ctx.fill();
+      ctx.restore();
+    },
+    draw(ctx, scale) {
+      ctx.fillStyle = "rgba(0,255,255,0.5)";
+      ctx.save();
+      ctx.translate(730 * scale, 520 * scale);
+      ctx.scale(scale * size, scale * size);
+      this.drawSegment(ctx, [-260,0], 310, [1.6, 1]);
+      this.drawSegment(ctx, [0,0], 10, [1.5, 0.9]);
+      this.drawSegment(ctx, [230,0], 8, [0.7, 0.9]);
+      this.drawSegment(ctx, [330,0], 0, [0.4, 0.4]);
+      this.drawSegment(ctx, [360, -40], 0, [2.5, 1.5]);
+      ctx.restore();
+      forcedUpdate = false;
+    },
+    clear(ctx, scale) {
+
+    },
+    forceUpdate() { forcedUpdate = true; },
+    updated: () => forcedUpdate
+  }
+};
+
+const ant = makeAnt();
+
+const renderLoop = () => {
+  fooFrameRenderer.render([ant]);
+
+	requestAnimationFrame(renderLoop);
+};
+renderLoop();
+
+initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
+  eventListeners.onResize,
+  fooFrameRenderer.onResize,
+  barTextRenderer.onResize,
+  () => ant.forceUpdate()
+));
+
+/* CLOCK
 let clearText = () => {};
 let text = "test", lastText = "";
 
@@ -83,3 +138,4 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
     text = `w=${w}, h=${h}, s=${s}, ts=${new Date().getTime()}`;
   }
 ));
+*/
