@@ -26,35 +26,41 @@ eventListeners.add("mousemove", (ev, scale) => {
 
 
 
-const clock = {
-  draw(ctx, scale) {
-    const dd = new Date();
-    const secDeg = (dd.getSeconds() / 60 * 360) * (Math.PI / 180);
-    ctx.beginPath();
-    ctx.moveTo((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale);
-    ctx.lineTo(
-      (VIRT_WIDTH / 2 + Math.cos(secDeg) * 200) * scale,
-      (VIRT_HEIGHT / 2 + Math.sin(secDeg) * 200) * scale);
-    ctx.stroke();
+const makeClock = () => {
+  let lastSec = -1, forcedUpdate = true;
 
-    ctx.beginPath();
-    ctx.arc((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale, 200 * scale,  0, 2 * Math.PI, false);
-    ctx.stroke();
+  return {
+    draw(ctx, scale) {
+      const dd = new Date();
+      const secDeg = (dd.getSeconds() / 60 * 360) * (Math.PI / 180);
+      ctx.beginPath();
+      ctx.moveTo((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale);
+      ctx.lineTo(
+        (VIRT_WIDTH / 2 + Math.cos(secDeg) * 200) * scale,
+        (VIRT_HEIGHT / 2 + Math.sin(secDeg) * 200) * scale);
+      ctx.stroke();
 
-    this.updated = false;
-  },
-  clear(ctx, scale) {
-    ctx.clearRect(
-      (VIRT_WIDTH / 2 - 200) * scale,
-      (VIRT_HEIGHT / 2 - 200) * scale,
-      400 * scale,
-      400 * scale
-    );
-  },
-  updated: true,
+      ctx.beginPath();
+      ctx.arc((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale, 200 * scale,  0, 2 * Math.PI, false);
+      ctx.stroke();
+      lastSec = dd.getSeconds();
+      forcedUpdate = false;
+    },
+    clear(ctx, scale) {
+      ctx.clearRect(
+        (VIRT_WIDTH / 2 - 200) * scale,
+        (VIRT_HEIGHT / 2 - 200) * scale,
+        400 * scale,
+        400 * scale
+      );
+    },
+    forceUpdate() { forcedUpdate = true; },
+    updated: () =>
+      forcedUpdate || lastSec !== new Date().getSeconds()
+  }
 };
 
-window.setInterval(() => {clock.updated = true }, 200);
+const clock = makeClock();
 
 const renderLoop = () => {
   if (text !== lastText) {
@@ -73,7 +79,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   fooFrameRenderer.onResize,
   barTextRenderer.onResize,
   (s, w, h) => {
-    clock.updated = true;
+    clock.forceUpdate();
     text = `w=${w}, h=${h}, s=${s}, ts=${new Date().getTime()}`;
   }
 ));

@@ -14,9 +14,9 @@ export default function(ctx, can) {
 				ctx.clearRect(0, 0, can.width, can.height);
 				clearRequested = false;
 			} else {
-				drawables.filter(d => d.updated).forEach(d => d.clear(ctx, scale));
+				drawables.filter(d => d.updated()).forEach(d => d.clear(ctx, scale));
 			}
-			drawables.filter(d => d.updated).forEach(d => d.draw(ctx, scale));
+			drawables.filter(d => d.updated()).forEach(d => d.draw(ctx, scale));
 		}
 	}
 }

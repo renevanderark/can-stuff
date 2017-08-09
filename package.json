@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "BUILD_TARGET=./build NODE_ENV=development webpack --colors --watch",
+    "start": "NODE_ENV=development webpack --colors --watch",
     "build": "BUILD_TARGET=./build NODE_ENV=production webpack --optimize-minimize"
   },
   "author": "",
