@@ -1,26 +1,22 @@
-export default (ctx) => {
-	let width, height, scale;
+export default function(ctx) {
+	let scale;
 	let clearRequested = false;
 
 	return {
-		onResize: (w, h, s) => {
-			width = w;
-			height = h;
+		onResize(s) {
 			scale = s;
 		},
-		clear: () => {
+		clear() {
 			clearRequested = true;
 		},
-		render: (drawables) => {
+		render(drawables) {
 			if (clearRequested) {
-				ctx.clearRect(0, 0, width, height);
+				ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 				clearRequested = false;
 			} else {
-				drawables.filter(d => d.updated)
-					.forEach(d => d.clear(ctx, scale));
+				drawables.filter(d => d.updated).forEach(d => d.clear(ctx, scale));
 			}
-			drawables.filter(d => d.updated)
-				.forEach(d => d.draw(ctx, scale));
+			drawables.filter(d => d.updated).forEach(d => d.draw(ctx, scale));
 		}
 	}
 }

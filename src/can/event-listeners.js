@@ -1,13 +1,13 @@
-export default () => {
+export default function() {
 	let scale;
 	let registered = [];
 
 	return {
-		onResize: (w, h, s) => {
+		onResize(s) {
 			scale = s;
 		},
-		add: (eventName, onEvent, elem = window) => {
-			const fn = ev => onEvent(eventName, ev, scale);
+		add(eventName, onEvent, elem = window) {
+			const fn = ev => onEvent(ev, scale);
 
 			registered.push({
 				elem: elem,
@@ -18,11 +18,10 @@ export default () => {
 
 			elem.addEventListener(eventName, fn);
 		},
-		clear: () => {
+		clear() {
 			registered.forEach(({elem, eventName, fn}) =>
 				elem.removeEventListener(eventName, fn)
 			)
 		}
 	}
-
 };

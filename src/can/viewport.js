@@ -1,10 +1,8 @@
-export default (vWidth, vHeight, listeners) => {
+export default function(vWidth, vHeight, listeners) {
 	const aspectRatio = vHeight / vWidth;
 
 	function invokeListeners(width, height, scale) {
-		listeners.forEach(function (listener) {
-			listener(width, height, scale);
-		});
+		listeners.forEach(listener =>	listener(scale, width, height));
 	}
 
 	function onResize() {

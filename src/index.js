@@ -21,8 +21,8 @@ const eventListeners = getEventListeners();
 let clearText = () => {};
 let text = "test", lastText = "";
 
-eventListeners.add("mousemove", (name, ev, scale) => {
-  text = `${name} at ${Math.round((ev.clientX - ev.target.offsetLeft) / scale)}` +
+eventListeners.add("mousemove", (ev, scale) => {
+  text = `mousemove at ${Math.round((ev.clientX - ev.target.offsetLeft) / scale)}` +
     ` ${Math.round((ev.clientY - ev.target.offsetTop) / scale)}`;
 }, barLayer);
 
@@ -58,7 +58,7 @@ const seconds = {
 const renderLoop = () => {
   if (text !== lastText) {
     clearText();
-    clearText = barTextRenderer.drawText(text, {size: 40});
+    clearText = barTextRenderer.drawText(text, 5, 50, 40);
     lastText = text;
   }
   fooFrameRenderer.render([seconds]);
@@ -71,7 +71,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   eventListeners.onResize,
   fooFrameRenderer.onResize,
   barTextRenderer.onResize,
-  (w, h, s) => {
+  (s, w, h) => {
     text = `w=${w}, h=${h}, s=${s}, ts=${new Date().getTime()}`;
   }
 ));
