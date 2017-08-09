@@ -1,4 +1,4 @@
-export default function(ctx) {
+export default function(ctx, can) {
 	let scale;
 	let clearRequested = false;
 
@@ -11,7 +11,7 @@ export default function(ctx) {
 		},
 		render(drawables) {
 			if (clearRequested) {
-				ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+				ctx.clearRect(0, 0, can.width, can.height);
 				clearRequested = false;
 			} else {
 				drawables.filter(d => d.updated).forEach(d => d.clear(ctx, scale));

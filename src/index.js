@@ -8,12 +8,10 @@ const VIRT_WIDTH = 1600;
 const VIRT_HEIGHT = 900;
 
 const fooLayer = document.getElementById("foo-layer");
-const fooLayerCtx = fooLayer.getContext('2d');
 const barLayer = document.getElementById("bar-layer");
-const barLayerCtx = barLayer.getContext("2d");
 
-const fooFrameRenderer = getFrameRenderer(fooLayerCtx, VIRT_WIDTH, VIRT_HEIGHT);
-const barTextRenderer = getTextRenderer(barLayerCtx, VIRT_WIDTH, VIRT_HEIGHT);
+const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
+const barTextRenderer = getTextRenderer(barLayer.getContext("2d"), barLayer);
 
 const eventListeners = getEventListeners();
 
@@ -27,33 +25,36 @@ eventListeners.add("mousemove", (ev, scale) => {
 }, barLayer);
 
 
-const seconds = {
-  clearRect: [0, 0, 0, 0],
+
+const clock = {
   draw(ctx, scale) {
     const dd = new Date();
     const secDeg = (dd.getSeconds() / 60 * 360) * (Math.PI / 180);
-    const p1 = [(VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale];
-    const p2 = [
-      (VIRT_WIDTH / 2 + Math.cos(secDeg) * 200) * scale,
-      (VIRT_HEIGHT / 2 + Math.sin(secDeg) * 200) * scale
-    ];
     ctx.beginPath();
-    ctx.moveTo(...p1);
-    ctx.lineTo(...p2);
+    ctx.moveTo((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale);
+    ctx.lineTo(
+      (VIRT_WIDTH / 2 + Math.cos(secDeg) * 200) * scale,
+      (VIRT_HEIGHT / 2 + Math.sin(secDeg) * 200) * scale);
     ctx.stroke();
-    this.clearRect = [
-      p1[0] < p2[0] ? p1[0] - 1 : p2[0] - 1,
-      p1[1] < p2[1] ? p1[1] - 1 : p2[1] - 1,
-      p1[0] > p2[0] ? p1[0] + 1 : p2[0] + 1,
-      p1[1] > p2[1] ? p1[1] + 1 : p2[1] + 1
-    ];
+
+    ctx.beginPath();
+    ctx.arc((VIRT_WIDTH / 2) * scale, (VIRT_HEIGHT / 2) * scale, 200 * scale,  0, 2 * Math.PI, false);
+    ctx.stroke();
+
+    this.updated = false;
   },
   clear(ctx, scale) {
-    ctx.clearRect(...this.clearRect);
+    ctx.clearRect(
+      (VIRT_WIDTH / 2 - 200) * scale,
+      (VIRT_HEIGHT / 2 - 200) * scale,
+      400 * scale,
+      400 * scale
+    );
   },
   updated: true,
-  lastSec: -1
 };
+
+window.setInterval(() => {clock.updated = true }, 200);
 
 const renderLoop = () => {
   if (text !== lastText) {
@@ -61,7 +62,7 @@ const renderLoop = () => {
     clearText = barTextRenderer.drawText(text, 5, 50, 40);
     lastText = text;
   }
-  fooFrameRenderer.render([seconds]);
+  fooFrameRenderer.render([clock]);
 
 	requestAnimationFrame(renderLoop);
 };
@@ -72,6 +73,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   fooFrameRenderer.onResize,
   barTextRenderer.onResize,
   (s, w, h) => {
+    clock.updated = true;
     text = `w=${w}, h=${h}, s=${s}, ts=${new Date().getTime()}`;
   }
 ));

@@ -1,4 +1,4 @@
-export default function(ctx) {
+export default function(ctx, can) {
 	let scale;
 	return {
 		onResize(s) {
@@ -8,7 +8,7 @@ export default function(ctx) {
 			ctx.font = `bold ${(size || 50) * scale}px sans-serif`;
 			ctx.fillStyle = fill || "#fff";
 			ctx.fillText(txt, Math.round(x * scale), Math.round(y * scale));
-			const doClear = () => ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+			const doClear = () => ctx.clearRect(0, 0, can.width, can.height);
 			if (timeout) {
 				setTimeout(doClear, timeout || 500);
 			}
