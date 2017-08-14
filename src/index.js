@@ -3,13 +3,14 @@ import getTextRenderer from "./can/text-renderer";
 import getResizeListeners from "./can/resize-listeners";
 import initViewPort from "./can/viewport";
 import getEventListeners from "./can/event-listeners";
-import makePath from "./gm/path";
+import makeLevel from "./gm/path";
 const VIRT_WIDTH = 1000;
 const VIRT_HEIGHT = 1000;
 
 
 
-makePath(21);
+const gm = makeLevel(21);
+gm.print(gm.walls);
 
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
