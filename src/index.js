@@ -3,21 +3,24 @@ import getTextRenderer from "./can/text-renderer";
 import getResizeListeners from "./can/resize-listeners";
 import initViewPort from "./can/viewport";
 import getEventListeners from "./can/event-listeners";
+import makePath from "./gm/path";
+const VIRT_WIDTH = 1000;
+const VIRT_HEIGHT = 1000;
 
-const VIRT_WIDTH = 1600;
-const VIRT_HEIGHT = 900;
+
+
+makePath(21);
 
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
-
-fooLayer.style.backgroundImage = "url(http://www.allwhitebackground.com/images/2/2297.jpg)";
-fooLayer.style.backgroundSize = "cover";
 
 const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barTextRenderer = getTextRenderer(barLayer.getContext("2d"), barLayer);
 
 const eventListeners = getEventListeners();
-
+/* ANT
+fooLayer.style.backgroundImage = "url(http://www.allwhitebackground.com/images/2/2297.jpg)";
+fooLayer.style.backgroundSize = "cover";
 const makeAnt = () => {
   let forcedUpdate = false;
   const size = 1;
@@ -69,7 +72,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize,
   () => ant.forceUpdate()
 ));
-
+*/
 /* CLOCK
 let clearText = () => {};
 let text = "test", lastText = "";
