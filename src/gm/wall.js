@@ -1,14 +1,27 @@
 export default function(gridKit) {
-  const { getOpen, Types, getRect} = gridKit;
+  const { getOpen, Types, getScreenPos, getGridSize, getRect } = gridKit;
 
   const _makeWall = (initWallDims) => {
     let wallSpaces = initWallDims;
     return {
       getSpaces: () => wallSpaces,
       draw(ctx, scale) {
-        wallSpaces.forEach(p => {
-          ctx.fillRect(...getRect(p, scale))
-        });
+        ctx.beginPath();
+        ctx.lineWidth = Math.floor(getGridSize(scale));
+        ctx.lineCap = 'round';
+        if (wallSpaces.length === 1) {
+          ctx.moveTo(...getScreenPos(wallSpaces[0], scale));
+          ctx.lineTo(...getScreenPos(wallSpaces[0], scale));
+        } else {
+          wallSpaces.forEach((p, i) => {
+            if (i === 0) {
+              ctx.moveTo(...getScreenPos(p, scale));
+            } else {
+              ctx.lineTo(...getScreenPos(p, scale));
+            }
+          });
+        }
+        ctx.stroke();
       },
       clear(ctx, scale) {
         wallSpaces.forEach(p => {

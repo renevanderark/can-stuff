@@ -16,10 +16,15 @@ export default function(SIZE, VIRT_WIDTH) {
     x > 0 ? getP(x - 1, y) : null, // left
     x < SIZE - 1 ? getP(x + 1, y) : null // right
   ];
+  const getScreenPos = (p, scale) => [
+    (getX(p) * screenSize * scale) + (screenSize * scale * 0.5),
+    (getY(p) * screenSize * scale) + (screenSize * scale * 0.5)
+  ];
   const getRect = (p, scale) => [
     getX(p) * screenSize * scale, getY(p) * screenSize * scale,
     screenSize * scale, screenSize * scale
   ];
+  const getGridSize = (scale) => screenSize * scale;
 
   const isOpen = (p, grid) => grid[p] === Types.OpenSpace;
   const getOpen = (p, grid) => getDirs(getX(p), getY(p)).filter(p => isOpen(p, grid));
@@ -37,6 +42,8 @@ export default function(SIZE, VIRT_WIDTH) {
   return {
     SIZE: SIZE,
     getRect: getRect,
+    getScreenPos: getScreenPos,
+    getGridSize: getGridSize,
     getX: getX,
     getY: getY,
     getP: getP,
