@@ -1,12 +1,23 @@
 export default function(gridKit) {
-  const { getOpen, Types } = gridKit;
+  const { getOpen, Types, getRect} = gridKit;
 
-  const _makeWall = (wallDims) => {
-
+  const _makeWall = (initWallDims) => {
+    let wallSpaces = initWallDims;
     return {
-      dims: wallDims
+      getSpaces: () => wallSpaces,
+      draw(ctx, scale) {
+        wallSpaces.forEach(p => {
+          ctx.fillRect(...getRect(p, scale))
+        });
+      },
+      clear(ctx, scale) {
+        wallSpaces.forEach(p => {
+          ctx.clearRect(...getRect(p, scale))
+        });
+      },
+      updated: () => true
     }
-  }
+  };
 
   const makeWall = (p, grid, len = 1, wall = []) => {
     grid[p] = Types.ClosedSpace;
@@ -21,7 +32,7 @@ export default function(gridKit) {
         wall.concat(p)
       );
     }
-  }
+  };
 
   return {
     makeWall: makeWall

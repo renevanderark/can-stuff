@@ -1,9 +1,11 @@
-export default function(SIZE) {
+export default function(SIZE, VIRT_WIDTH) {
   const Types = {
     OpenSpace: 0,
     PathSpace: 1,
     ClosedSpace: 2
   };
+
+  const screenSize = VIRT_WIDTH / SIZE;
 
   const getX = p => p % SIZE;
   const getY = p => (p - (p % SIZE)) / SIZE;
@@ -13,6 +15,10 @@ export default function(SIZE) {
     y < SIZE - 1 ? getP(x, y + 1) : null, // down
     x > 0 ? getP(x - 1, y) : null, // left
     x < SIZE - 1 ? getP(x + 1, y) : null // right
+  ];
+  const getRect = (p, scale) => [
+    getX(p) * screenSize * scale, getY(p) * screenSize * scale,
+    screenSize * scale, screenSize * scale
   ];
 
   const isOpen = (p, grid) => grid[p] === Types.OpenSpace;
@@ -30,6 +36,7 @@ export default function(SIZE) {
 
   return {
     SIZE: SIZE,
+    getRect: getRect,
     getX: getX,
     getY: getY,
     getP: getP,

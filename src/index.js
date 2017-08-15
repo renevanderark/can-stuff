@@ -24,9 +24,15 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(21);
+const gridKit = gridMaker(21, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
-gm.print(gm.walls);
+
+const renderLoop = () => {
+  fooFrameRenderer.render(gm.walls);
+
+	requestAnimationFrame(renderLoop);
+};
+renderLoop();
 
 /* ANT
 fooLayer.style.backgroundImage = "url(http://www.allwhitebackground.com/images/2/2297.jpg)";

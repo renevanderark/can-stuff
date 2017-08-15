@@ -31,15 +31,6 @@ export default function(gridKit) {
   }
 
   return {
-    walls: walls,
-    print: (walls) => {
-      for (let y = 0; y < SIZE; y++) {
-        let row = '';
-        for (let x = 0; x < SIZE; x++) {
-          row += walls.map(w => w.dims).reduce((a,b) => a.concat(b)).indexOf(getP(x, y)) > - 1  ? 'X'  : '·'
-        }
-        console.log(`${y < 10 ? "0" + y : y}: ${row}`);
-      }
-    }
+    walls: walls
   };
 };
