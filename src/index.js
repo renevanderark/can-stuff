@@ -27,7 +27,21 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
 const gridKit = gridMaker(21, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
 
-setTimeout(() =>  fooFrameRenderer.render(gm.walls), 1000);
+const renderLoop = () => {
+  fooFrameRenderer.render(gm.walls);
+  requestAnimationFrame(renderLoop);
+}
+renderLoop();
+
+eventListeners.add("click", (ev, scale) => {
+  gm.walls
+    .filter(w => w.isAt(
+      ev.clientX - ev.target.offsetLeft,
+      ev.clientY - ev.target.offsetTop,
+      scale
+    ))
+    .forEach(w => w.rotate());
+}, barLayer);
 
 
 /* ANT

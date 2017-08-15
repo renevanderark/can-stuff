@@ -3,11 +3,26 @@ export default function(gridKit) {
 
   const _makeWall = (initWallDims) => {
     let wallSpaces = initWallDims;
+    let test = "black";
     return {
       getSpaces: () => wallSpaces,
+      isAt(screenX, screenY, scale) {
+        const siz = getGridSize(scale) / 2;
+        for (let i = 0; i < wallSpaces.length; i++) {
+          const [x, y] = getScreenPos(wallSpaces[i], scale);
+          if (y - siz < screenY && y + siz > screenY &&
+              x - siz < screenX && x + siz > screenX
+          ) { return true; }
+        }
+        return false;
+      },
+      rotate() {
+        test = "red";
+      },
       draw(ctx, scale) {
         ctx.beginPath();
         ctx.lineWidth = Math.floor(getGridSize(scale));
+        ctx.strokeStyle = test;
         ctx.lineCap = 'round';
         if (wallSpaces.length === 1) {
           ctx.moveTo(...getScreenPos(wallSpaces[0], scale));
