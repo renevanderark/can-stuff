@@ -3,14 +3,12 @@ import getTextRenderer from "./can/text-renderer";
 import getResizeListeners from "./can/resize-listeners";
 import initViewPort from "./can/viewport";
 import getEventListeners from "./can/event-listeners";
-import makeLevel from "./gm/path";
+
+import makeLevel from "./gm/make-level";
+import gridMaker from "./gm/grid";
+
 const VIRT_WIDTH = 1000;
 const VIRT_HEIGHT = 1000;
-
-
-
-const gm = makeLevel(21);
-gm.print(gm.walls);
 
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
@@ -19,6 +17,17 @@ const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barTextRenderer = getTextRenderer(barLayer.getContext("2d"), barLayer);
 
 const eventListeners = getEventListeners();
+
+initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
+  eventListeners.onResize,
+  fooFrameRenderer.onResize,
+  barTextRenderer.onResize
+));
+
+const gridKit = gridMaker(21);
+const gm = makeLevel(gridKit);
+gm.print(gm.walls);
+
 /* ANT
 fooLayer.style.backgroundImage = "url(http://www.allwhitebackground.com/images/2/2297.jpg)";
 fooLayer.style.backgroundSize = "cover";
