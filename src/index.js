@@ -24,14 +24,41 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(11, VIRT_WIDTH);
+const gridKit = gridMaker(21, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
 
+const makePuppet = () => {
+  const { getP, getScreenPos, getGridSize, SIZE, getRect, getX, getY } = gridKit;
+  let pos = getP((SIZE - 1) / 2, (SIZE - 1) / 2)
+
+  return {
+    move(x, y) {
+      let newPos = getP(getX(pos) + x, getY(pos) + y);
+      if (newPos > -1 && gridKit.gridSpaceIsFree(gm.walls, -1)(newPos)) {
+        pos = newPos;
+      }
+    },
+    draw(ctx, scale) {
+      ctx.beginPath()
+      ctx.arc(...getScreenPos(pos, scale), getGridSize(scale) / 6, 0, 2 * Math.PI, false);
+      ctx.fill();
+    },
+    clear(ctx, scale) {
+      ctx.clearRect(...getRect(pos, scale));
+    },
+    updated: () => true
+  }
+}
+
+const puppet = makePuppet();
+
 const renderLoop = () => {
-  fooFrameRenderer.render(gm.walls);
+  fooFrameRenderer.render(gm.walls.concat(puppet));
   requestAnimationFrame(renderLoop);
 }
 renderLoop();
+
+
 
 eventListeners.add("click", (ev, scale) => {
   gm.walls
@@ -46,6 +73,18 @@ eventListeners.add("click", (ev, scale) => {
       w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx))
     });
 }, barLayer);
+
+eventListeners.add("keypress", (ev, scale) => {
+  puppet.clear(fooLayer.getContext('2d'), scale);
+
+  switch (ev.keyCode) {
+    case 37: puppet.move(-1, 0); break;
+    case 38: puppet.move(0, -1); break;
+    case 39: puppet.move(1, 0); break;
+    case 40: puppet.move(0, 1); break;
+  }
+});
+
 
 
 /* ANT

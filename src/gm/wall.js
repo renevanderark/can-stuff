@@ -4,7 +4,7 @@ export default function(gridKit) {
   const _makeWall = (initWallDims) => {
     let wallSpaces = initWallDims;
 
-    const pivot = wallSpaces[0];
+    const pivot = wallSpaces[Math.floor(Math.random() * initWallDims.length)];
 
     const getPivotPos = () => ({ x: getX(pivot), y: getY(pivot) });
 
