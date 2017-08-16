@@ -33,13 +33,6 @@ const renderLoop = () => {
 }
 renderLoop();
 
-const gridSpaceIsFree = (wallIdx) => (spaceIdx) => gm.walls
-  .filter((w, idx) => idx !== wallIdx)
-  .map(w => w.getSpaces())
-  .reduce((a, b) => a.concat(b))
-  .indexOf(spaceIdx) < 0;
-
-
 eventListeners.add("click", (ev, scale) => {
   gm.walls
     .map((w, wIdx) => ({w: w, wIdx: wIdx}))
@@ -50,7 +43,7 @@ eventListeners.add("click", (ev, scale) => {
     ))
     .forEach(({w, wIdx}) => {
       w.clear(fooLayer.getContext('2d'), scale);
-      w.rotate(gridSpaceIsFree(wIdx))
+      w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx))
     });
 }, barLayer);
 

@@ -35,9 +35,8 @@ export default function(gridKit) {
 
     let currentRotation = determineCurrentRotation();
 
-
-
     return {
+      getCurrentRotation: () => currentRotation,
       getSpaces: () => wallSpaces,
       isAt(screenX, screenY, scale) {
         const siz = getGridSize(scale) / 2;
@@ -66,6 +65,8 @@ export default function(gridKit) {
             break;
           }
         } while (currentRotation !== lastRotation);
+
+        return currentRotation;
       },
 
       draw(ctx, scale) {

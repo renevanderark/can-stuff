@@ -41,6 +41,13 @@ export default function(SIZE, VIRT_WIDTH) {
     return grid;
   }
 
+  const gridSpaceIsFree = (walls, wallIdx) => (spaceIdx) => walls
+    .filter((w, idx) => idx !== wallIdx)
+    .map(w => w.getSpaces())
+    .reduce((a, b) => a.concat(b))
+    .indexOf(spaceIdx) < 0;
+
+
   return {
     SIZE: SIZE,
     getRect: getRect,
@@ -51,6 +58,7 @@ export default function(SIZE, VIRT_WIDTH) {
     getP: getP,
     getOpen: getOpen,
     Types: Types,
-    initGrid: initGrid
+    initGrid: initGrid,
+    gridSpaceIsFree: gridSpaceIsFree
   }
 }
