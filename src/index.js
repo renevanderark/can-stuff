@@ -24,7 +24,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(21, VIRT_WIDTH);
+const gridKit = gridMaker(31, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
 
 const makePuppet = () => {
