@@ -27,7 +27,8 @@ export default function(gridKit) {
       .map((g, i) => ({g: g, i: i}))
       .filter(({g}) => g === Types.OpenSpace);
     const cur = openSpaces[Math.floor(Math.random() * openSpaces.length)].i;
-    walls.push(makeWall(cur, grid, Math.floor(Math.random() * 6) === 0 ? 3 : 2));
+    const newWall = makeWall(cur, grid, Math.floor(Math.random() * 3) === 0 ? 3 : 2);
+    if (newWall !== null) { walls.push(newWall); }
   }
 
   return {

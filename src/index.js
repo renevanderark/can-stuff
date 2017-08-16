@@ -24,7 +24,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(21, VIRT_WIDTH);
+const gridKit = gridMaker(11, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
 
 const renderLoop = () => {
@@ -33,14 +33,25 @@ const renderLoop = () => {
 }
 renderLoop();
 
+const gridSpaceIsFree = (wallIdx) => (spaceIdx) => gm.walls
+  .filter((w, idx) => idx !== wallIdx)
+  .map(w => w.getSpaces())
+  .reduce((a, b) => a.concat(b))
+  .indexOf(spaceIdx) < 0;
+
+
 eventListeners.add("click", (ev, scale) => {
   gm.walls
-    .filter(w => w.isAt(
+    .map((w, wIdx) => ({w: w, wIdx: wIdx}))
+    .filter(({w}) => w.isAt(
       ev.clientX - ev.target.offsetLeft,
       ev.clientY - ev.target.offsetTop,
       scale
     ))
-    .forEach(w => w.rotate());
+    .forEach(({w, wIdx}) => {
+      w.clear(fooLayer.getContext('2d'), scale);
+      w.rotate(gridSpaceIsFree(wIdx))
+    });
 }, barLayer);
 
 

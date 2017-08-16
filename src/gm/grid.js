@@ -9,7 +9,9 @@ export default function(SIZE, VIRT_WIDTH) {
 
   const getX = p => p % SIZE;
   const getY = p => (p - (p % SIZE)) / SIZE;
-  const getP = (x, y) => x + (y * SIZE);
+  const getP = (x, y) => x >= 0  && x < SIZE && y >= 0 && y < SIZE
+    ?  x + (y * SIZE)
+    : -1;
   const getDirs = (x, y) => [
     y > 0 ? getP(x, y - 1) : null, // up
     y < SIZE - 1 ? getP(x, y + 1) : null, // down

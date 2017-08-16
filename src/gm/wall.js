@@ -1,9 +1,42 @@
 export default function(gridKit) {
-  const { getOpen, Types, getScreenPos, getGridSize, getRect } = gridKit;
+  const { getOpen, Types, getScreenPos, getGridSize, getRect, getX, getY, getP } = gridKit;
 
   const _makeWall = (initWallDims) => {
     let wallSpaces = initWallDims;
-    let test = "black";
+
+    const pivot = wallSpaces[0];
+
+    const getPivotPos = () => ({ x: getX(pivot), y: getY(pivot) });
+
+    const rotateVec2 = (pivotPos, vec, rad) => ({
+      x: pivotPos.x + Math.round(vec.x * Math.cos(rad) - vec.y * Math.sin(rad)),
+      y: pivotPos.y + Math.round(vec.x * Math.sin(rad) + vec.y * Math.cos(rad))
+    });
+
+    const getRotatedPositions = (positions, pivotPos, pivotDeltae, rad) =>
+      positions
+        .map((p, i) => rotateVec2(pivotPos, pivotDeltae[i], rad))
+        .map(({x, y}) => getP(x, y));
+
+    const determineCurrentRotation = () => {
+      const pivotPos = getPivotPos();
+      const positions = initWallDims.map(w => ({x: getX(w), y: getY(w)}));
+      const pivotDeltae = positions.map(p => ({x: pivotPos.x - p.x, y: pivotPos.y - p.y}));
+      for (let rot = 0; rot < 4; rot++) {
+        const rad = (rot * 90) * (Math.PI / 180);
+        const rotatedSpaces = getRotatedPositions(positions, pivotPos, pivotDeltae, rad);
+        if (rotatedSpaces.filter((r, i) => r === initWallDims[i]).length === initWallDims.length) {
+          return rot;
+        }
+      }
+      console.log("never reached?")
+      return 0;
+    };
+
+    let currentRotation = determineCurrentRotation();
+
+
+
     return {
       getSpaces: () => wallSpaces,
       isAt(screenX, screenY, scale) {
@@ -16,13 +49,28 @@ export default function(gridKit) {
         }
         return false;
       },
-      rotate() {
-        test = "red";
+
+      rotate(gridSpaceIsFree) {
+        const pivotPos = getPivotPos();
+        const positions = initWallDims.map(w => ({x: getX(w), y: getY(w)}));
+        const pivotDeltae = positions.map(p => ({x: pivotPos.x - p.x, y: pivotPos.y - p.y}));
+
+        const lastRotation = currentRotation;
+
+        do {
+          currentRotation = currentRotation === 3 ? 0 : currentRotation + 1;
+          const rad = (currentRotation * 90) * (Math.PI / 180);
+          const rotatedSpaces = getRotatedPositions(positions, pivotPos, pivotDeltae, rad);
+          if (rotatedSpaces.indexOf(-1) < 0 && rotatedSpaces.filter(rs => !gridSpaceIsFree(rs)).length === 0) {
+            wallSpaces = rotatedSpaces;
+            break;
+          }
+        } while (currentRotation !== lastRotation);
       },
+
       draw(ctx, scale) {
         ctx.beginPath();
         ctx.lineWidth = Math.floor(getGridSize(scale));
-        ctx.strokeStyle = test;
         ctx.lineCap = 'round';
         if (wallSpaces.length === 1) {
           ctx.moveTo(...getScreenPos(wallSpaces[0], scale));
@@ -37,6 +85,11 @@ export default function(gridKit) {
           });
         }
         ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.arc(...getScreenPos(pivot, scale), getGridSize(scale) / 6, 0, 2 * Math.PI, false);
+
+        ctx.fill();
       },
       clear(ctx, scale) {
         wallSpaces.forEach(p => {
@@ -51,7 +104,7 @@ export default function(gridKit) {
     grid[p] = Types.ClosedSpace;
     const open = getOpen(p, grid);
     if (open.length === 0 || len === 1) {
-      return _makeWall(wall.concat(p));
+      return wall.length < 1 ? null : _makeWall(wall.concat(p));
     } else {
       return makeWall(
         open[parseInt(Math.random() * open.length, 10)],
