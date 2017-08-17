@@ -6,6 +6,7 @@ import getEventListeners from "./can/event-listeners";
 
 import makeLevel from "./gm/make-level";
 import gridMaker from "./gm/grid";
+import makePuppet from "./gm/puppet";
 
 const VIRT_WIDTH = 1000;
 const VIRT_HEIGHT = 1000;
@@ -24,41 +25,16 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(21, VIRT_WIDTH);
+
+const gridKit = gridMaker(11, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
-
-const makePuppet = () => {
-  const { getP, getScreenPos, getGridSize, SIZE, getRect, getX, getY } = gridKit;
-  let pos = getP((SIZE - 1) / 2, (SIZE - 1) / 2)
-
-  return {
-    move(x, y) {
-      let newPos = getP(getX(pos) + x, getY(pos) + y);
-      if (newPos > -1 && gridKit.gridSpaceIsFree(gm.walls, -1)(newPos)) {
-        pos = newPos;
-      }
-    },
-    draw(ctx, scale) {
-      ctx.beginPath()
-      ctx.arc(...getScreenPos(pos, scale), getGridSize(scale) / 6, 0, 2 * Math.PI, false);
-      ctx.fill();
-    },
-    clear(ctx, scale) {
-      ctx.clearRect(...getRect(pos, scale));
-    },
-    updated: () => true
-  }
-}
-
-const puppet = makePuppet();
+const puppet = makePuppet(gridKit, gm.walls);
 
 const renderLoop = () => {
-  fooFrameRenderer.render(gm.walls.concat(puppet));
+  fooFrameRenderer.render([puppet].filter(p => p !== null).concat(gm.walls));
   requestAnimationFrame(renderLoop);
 }
 renderLoop();
-
-
 
 eventListeners.add("click", (ev, scale) => {
   gm.walls
@@ -70,8 +46,11 @@ eventListeners.add("click", (ev, scale) => {
     ))
     .forEach(({w, wIdx}) => {
       w.clear(fooLayer.getContext('2d'), scale);
-      w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx))
+      w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx));
     });
+  if (!gridKit.gridSpaceIsFree(gm.walls, -1)(puppet.getPos())) {
+    console.log("GAME OVER!");
+  }
 }, barLayer);
 
 eventListeners.add("contextmenu", (ev, scale) => {
