@@ -24,7 +24,7 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   barTextRenderer.onResize
 ));
 
-const gridKit = gridMaker(31, VIRT_WIDTH);
+const gridKit = gridMaker(21, VIRT_WIDTH);
 const gm = makeLevel(gridKit);
 
 const makePuppet = () => {
@@ -73,6 +73,18 @@ eventListeners.add("click", (ev, scale) => {
       w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx))
     });
 }, barLayer);
+
+eventListeners.add("contextmenu", (ev, scale) => {
+  gm.walls
+    .filter(w => w.isAt(
+      ev.clientX - ev.target.offsetLeft,
+      ev.clientY - ev.target.offsetTop,
+      scale
+    ))
+    .forEach(w => w.movePivot());
+
+    return ev.preventDefault();
+})
 
 eventListeners.add("keypress", (ev, scale) => {
   puppet.clear(fooLayer.getContext('2d'), scale);

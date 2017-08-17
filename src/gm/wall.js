@@ -3,8 +3,8 @@ export default function(gridKit) {
 
   const _makeWall = (initWallDims) => {
     let wallSpaces = initWallDims;
-
-    const pivot = wallSpaces[Math.floor(Math.random() * initWallDims.length)];
+    let pivotIdx = Math.floor(Math.random() * initWallDims.length);
+    let pivot = wallSpaces[pivotIdx];
 
     const getPivotPos = () => ({ x: getX(pivot), y: getY(pivot) });
 
@@ -29,14 +29,18 @@ export default function(gridKit) {
           return rot;
         }
       }
-      console.log("never reached?")
       return 0;
     };
 
     let currentRotation = determineCurrentRotation();
 
     return {
-      getCurrentRotation: () => currentRotation,
+      movePivot: () => {
+        pivotIdx = pivotIdx < wallSpaces.length - 1 ? pivotIdx + 1 : 0;
+        pivot = wallSpaces[pivotIdx];
+        initWallDims = wallSpaces;
+        currentRotation = determineCurrentRotation();
+      },
       getSpaces: () => wallSpaces,
       isAt(screenX, screenY, scale) {
         const siz = getGridSize(scale) / 2;
