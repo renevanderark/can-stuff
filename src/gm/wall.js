@@ -33,6 +33,18 @@ export default function(gridKit) {
       return 0;
     };
 
+    const drawStrokes = (ctx, scale, strokeStyle, redux = 0) => {
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineWidth = Math.floor(getGridSize(scale) - (2*redux));
+      wallSpaces.forEach((p, i) => {
+        if (i === 0) {
+          ctx.moveTo(...(getScreenPos(p, scale).map(p => p - redux)));
+        } else {
+          ctx.lineTo(...(getScreenPos(p, scale).map(p => p - redux)));
+        }
+      });
+      ctx.stroke();
+    };
     let currentRotation = determineCurrentRotation();
 
     return {
@@ -78,30 +90,29 @@ export default function(gridKit) {
 
       draw(ctx, scale) {
         ctx.beginPath();
-        ctx.lineWidth = Math.floor(getGridSize(scale));
         ctx.lineCap = 'round';
-        if (wallSpaces.length === 1) {
-          ctx.moveTo(...getScreenPos(wallSpaces[0], scale));
-          ctx.lineTo(...getScreenPos(wallSpaces[0], scale));
-        } else {
-          wallSpaces.forEach((p, i) => {
-            if (i === 0) {
-              ctx.moveTo(...getScreenPos(p, scale));
-            } else {
-              ctx.lineTo(...getScreenPos(p, scale));
-            }
-          });
-        }
-        ctx.stroke();
+        drawStrokes(ctx, scale, "rgba(96, 0, 0, 0.6)", 0);
+        drawStrokes(ctx, scale, "rgba(128, 0, 0, 0.8)", 1);
+        drawStrokes(ctx, scale, "rgb(196, 0, 0)", 2);
+
         ctx.beginPath();
-        ctx.fillStyle = "white";
-        ctx.arc(...getScreenPos(pivot, scale), getGridSize(scale) / 6, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "rgb(96, 0, 0)";
+        ctx.arc(...(getScreenPos(pivot, scale).map(p => p - 1)), getGridSize(scale) / 10, 0, 2 * Math.PI, false);
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.strokeStyle = "rgb(196, 96, 96)";
+        const gridSize = getGridSize(scale);
+        ctx.lineWidth = Math.round(gridSize / 14);
+        ctx.moveTo(...(getScreenPos(pivot, scale).map(p => p - 1)));
+        ctx.lineTo(...(getScreenPos(pivot, scale).map((p,i) => p - (i === 0 ? (3*scale) : (0.4*gridSize*scale)))));
+        ctx.stroke();
+
         updated = false;
       },
       clear(ctx, scale) {
         wallSpaces.forEach(p => {
-          ctx.clearRect(...getRect(p, scale))
+          ctx.clearRect(...getRect(p, scale).map((p, i) => i < 2 ? p - 1 : p + 1));
         });
       },
       forceUpdate() { updated = true; },

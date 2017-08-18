@@ -37,7 +37,8 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate())
 ));
 
-function startLevel(size = 11, lvl = 1) {
+function startLevel(siz = 11, lvl = 1) {
+  const size = siz > 51 ? 51 : siz;
   fooFrameRenderer.clear();
   gridKit = gridMaker(size, VIRT_WIDTH);
   gm = makeLevel(gridKit);
