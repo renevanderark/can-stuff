@@ -1,5 +1,4 @@
 import getFrameRenderer from "./can/frame-renderer";
-import getTextRenderer from "./can/text-renderer";
 import getResizeListeners from "./can/resize-listeners";
 import initViewPort from "./can/viewport";
 import getEventListeners from "./can/event-listeners";
