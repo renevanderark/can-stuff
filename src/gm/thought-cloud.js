@@ -1,13 +1,21 @@
 export default function(VIRT_WIDTH) {
   let puppetPos = { x : 0 , y : 0 };
-  let updated = true;
+  let updated = true, visible = true;
+  let currentText = "Welcome to my confused mind!";
+
   return {
     followPuppet(virtX, virtY) {
       puppetPos = {x: virtX, y: virtY };
       updated = true;
     },
 
+    disappear(ctx) {
+      visible = false;
+      updated = true;
+    },
+
     draw(ctx, scale) {
+      if (!visible) { return; }
       const cloudY = puppetPos.y > 250 ? 150 : 450;
       const cloudX = VIRT_WIDTH / 2;
       ctx.fillStyle = "rgba(255,255,255,1)";
@@ -34,11 +42,14 @@ export default function(VIRT_WIDTH) {
         ctx.arc(x * scale, y * scale, (s + 1) * scale, 2 * Math.PI, false);
         ctx.fill();
       }
-
       updated = false;
+
+      ctx.font = `bold ${30 * scale}px sans-serif`;
+			ctx.fillStyle = "black";
+			ctx.fillText(currentText, (cloudX * scale) - (ctx.measureText(currentText).width / 2), (15 + cloudY) * scale);
+
     },
-    clear(ctx, scale) {
-      console.log(new Date().getTime());
+    clear(ctx) {
       ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
     },
     updated: () => updated
