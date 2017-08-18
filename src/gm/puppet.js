@@ -13,13 +13,15 @@ export default (gridKit, walls) => {
     },
     draw(ctx, scale) {
       ctx.beginPath();
-      ctx.fillStyle = "white";
-      ctx.arc(...getScreenPos(pos, scale), getGridSize(scale) / 8, 0, 2 * Math.PI, false);
+      ctx.fillStyle = "rgb(128,128,255)";
+      ctx.arc(...getScreenPos(pos, scale), getGridSize(scale) / 3, 0, 2 * Math.PI, false);
       ctx.fill();
       ctx.fillStyle = "black";
-      ctx.font = `normal ${25 * scale}px sans-serif`;
-
-      ctx.fillText("∞", ...(getScreenPos(pos, scale).map((p,i) => i === 0  ? p - (10 * scale) : p + (6 * scale))));
+      ctx.font = `normal ${getGridSize(scale) * 0.75}px sans-serif`;
+      ctx.save();
+      ctx.translate(-(getGridSize(scale) / 4), getGridSize(scale) / 10);
+      ctx.fillText("∞", ...getScreenPos(pos, scale));
+      ctx.restore();
       updated = false;
     },
     clear(ctx, scale) {

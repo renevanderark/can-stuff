@@ -21,9 +21,6 @@ const barFrameRenderer = getFrameRenderer(barLayer.getContext('2d'), barLayer);
 
 const eventListeners = getEventListeners();
 
-
-
-
 let gridKit;
 let gm = {walls: []};
 let puppet = null;

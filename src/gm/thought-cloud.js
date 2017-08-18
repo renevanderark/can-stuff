@@ -50,7 +50,7 @@ export default function(VIRT_WIDTH) {
       const targetAng = Math.atan2(cloudY - puppetPos.y, (cloudX / 2) -  puppetPos.x);
       let ang = targetAng - 1.5;
       const delta = Math.sqrt(Math.pow((cloudX / 2) - puppetPos.x, 2) + Math.pow(cloudY - puppetPos.y, 2));
-      let x = puppetPos.x, y = puppetPos.y;
+      let x = puppetPos.x - 10, y = puppetPos.y;
       for (let s = 0; s < 10; s++) {
         ang += 0.2;
         x += Math.cos(ang) * (delta * (s / 70)) ;
