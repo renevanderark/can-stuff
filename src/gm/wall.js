@@ -5,6 +5,7 @@ export default function(gridKit) {
     let wallSpaces = initWallDims;
     let pivotIdx = Math.floor(Math.random() * initWallDims.length);
     let pivot = wallSpaces[pivotIdx];
+    let updated = true;
 
     const getPivotPos = () => ({ x: getX(pivot), y: getY(pivot) });
 
@@ -40,6 +41,7 @@ export default function(gridKit) {
         pivot = wallSpaces[pivotIdx];
         initWallDims = wallSpaces;
         currentRotation = determineCurrentRotation();
+        updated = true;
       },
       getSpaces: () => wallSpaces,
       isAt(screenX, screenY, scale) {
@@ -70,6 +72,7 @@ export default function(gridKit) {
           }
         } while (currentRotation !== lastRotation);
 
+        updated = true;
         return currentRotation;
       },
 
@@ -93,15 +96,16 @@ export default function(gridKit) {
         ctx.beginPath();
         ctx.fillStyle = "white";
         ctx.arc(...getScreenPos(pivot, scale), getGridSize(scale) / 6, 0, 2 * Math.PI, false);
-
         ctx.fill();
+        updated = false;
       },
       clear(ctx, scale) {
         wallSpaces.forEach(p => {
           ctx.clearRect(...getRect(p, scale))
         });
       },
-      updated: () => true
+      forceUpdate() { updated = true; },
+      updated: () => updated
     }
   };
 

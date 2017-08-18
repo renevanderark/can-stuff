@@ -17,37 +17,44 @@ const barLayer = document.getElementById("bar-layer");
 
 const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barFrameRenderer = getFrameRenderer(barLayer.getContext('2d'), barLayer);
-const barTextRenderer = getTextRenderer(barLayer.getContext("2d"), barLayer);
 
 const eventListeners = getEventListeners();
 
-initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
-  eventListeners.onResize,
-  fooFrameRenderer.onResize,
-  barTextRenderer.onResize,
-  barFrameRenderer.onResize
-));
+
 
 
 let gridKit;
 let gm = {walls: []};
 let puppet = null;
 let thoughtCloud = makeThoughtCloud(VIRT_WIDTH);
+let isWelcome = true;
+
+initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
+  eventListeners.onResize,
+  fooFrameRenderer.onResize,
+  barFrameRenderer.onResize,
+  () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate())
+));
 
 function startLevel(size = 11, lvl = 1) {
+  console.log("starting level: ", lvl, size);
   fooFrameRenderer.clear();
   gridKit = gridMaker(size, VIRT_WIDTH);
   gm = makeLevel(gridKit);
   puppet = makePuppet(gridKit, gm.walls);
   thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));
-  thoughtCloud.setTrainOfThoughtAndAppear([
-    "Welcome to my confused mind!",
-    "I have to find a way out!",
-    "Use the arrow keys to move me around...",
-    "left click to rotate my brain barriers...",
-    "and right click to move the rotation point...",
-    
-  ]);
+  if (isWelcome) {
+    thoughtCloud.setTrainOfThoughtAndAppear([
+      "Welcome to my confused mind!",
+      "I have to find a way out of here!",
+      "Use the arrow keys to move me around...",
+      "left click to rotate my brain barriers...",
+      "and right click to move the rotation point...",
+      "of a brain barrier.",
+      "Be careful not to squash me!"
+    ]);
+    isWelcome = false;
+  }
   initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
     () => clearLevel(() => startLevel()), // onGameOver
     () => clearLevel(() => startLevel(size + 2, lvl + 1))  // onSolveLevel
@@ -55,7 +62,6 @@ function startLevel(size = 11, lvl = 1) {
 }
 
 function clearLevel(startNextLevel) {
-  clearGameEvents(eventListeners);
   puppet = null;
   gm.walls = [];
   startNextLevel();

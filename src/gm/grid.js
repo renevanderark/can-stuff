@@ -45,7 +45,7 @@ export default function(SIZE, VIRT_WIDTH) {
   const gridSpaceIsFree = (walls, wallIdx) => (spaceIdx) => walls
     .filter((w, idx) => idx !== wallIdx)
     .map(w => w.getSpaces())
-    .reduce((a, b) => a.concat(b))
+    .reduce((a, b) => a.concat(b), [])
     .indexOf(spaceIdx) < 0;
 
 

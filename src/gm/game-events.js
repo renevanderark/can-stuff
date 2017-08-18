@@ -1,3 +1,5 @@
+import { gameOverThought, salvationThought } from "./thoughts";
+
 function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
    onGameOver, onSolveLevel) {
   eventListeners.add("click", (ev, scale) => {
@@ -13,9 +15,13 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
         w.clear(fooLayer.getContext('2d'), scale);
         w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx));
       });
+
     if (!gridKit.gridSpaceIsFree(gm.walls, -1)(puppet.getPos())) {
-      window.setTimeout(onGameOver, 1000)
+      thoughtCloud.setTrainOfThoughtAndAppear([gameOverThought()]);
+      clearGameEvents(eventListeners);
+      window.setTimeout(onGameOver, 2500);
     }
+
   }, barLayer);
 
   eventListeners.add("contextmenu", (ev, scale) => {
@@ -40,11 +46,15 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
       case 39: puppet.move(1, 0); break;
       case 40: puppet.move(0, 1); break;
     }
+
     thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));
     if (gridKit.getX(puppet.getPos()) === 0 || gridKit.getY(puppet.getPos()) === 0 ||
         gridKit.getX(puppet.getPos()) === gridKit.SIZE - 1 || gridKit.getY(puppet.getPos()) === gridKit.SIZE - 1) {
+      clearGameEvents(eventListeners);
+      thoughtCloud.setTrainOfThoughtAndAppear([salvationThought()]);
       window.setTimeout(onSolveLevel, 1000);
     }
+
   });
 }
 

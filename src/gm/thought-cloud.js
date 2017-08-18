@@ -58,16 +58,15 @@ export default function(VIRT_WIDTH) {
         ctx.arc(x * scale, y * scale, (s + 1) * scale, 2 * Math.PI, false);
         ctx.fill();
       }
-      updated = false;
-
       ctx.font = `bold ${30 * scale}px sans-serif`;
 			ctx.fillStyle = "black";
 			ctx.fillText(currentText, (cloudX * scale) - (ctx.measureText(currentText).width / 2), (15 + cloudY) * scale);
-
+      updated = false;
     },
     clear(ctx) {
       ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
     },
+    forceUpdate() { updated = true; },
     updated: () => updated
   }
 }
