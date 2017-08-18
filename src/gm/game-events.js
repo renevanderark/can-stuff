@@ -1,4 +1,4 @@
-function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
+function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
    onGameOver, onSolveLevel) {
   eventListeners.add("click", (ev, scale) => {
     gm.walls
@@ -37,6 +37,7 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
       case 39: puppet.move(1, 0); break;
       case 40: puppet.move(0, 1); break;
     }
+    thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));
     if (gridKit.getX(puppet.getPos()) === 0 || gridKit.getY(puppet.getPos()) === 0 ||
         gridKit.getX(puppet.getPos()) === gridKit.SIZE - 1 || gridKit.getY(puppet.getPos()) === gridKit.SIZE - 1) {
       window.setTimeout(onSolveLevel, 1000);
