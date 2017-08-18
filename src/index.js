@@ -8,6 +8,7 @@ import makeLevel from "./gm/make-level";
 import gridMaker from "./gm/grid";
 import makePuppet from "./gm/puppet";
 import makeThoughtCloud from "./gm/thought-cloud";
+
 import { initGameEvents, clearGameEvents } from "./gm/game-events";
 const VIRT_WIDTH = 1000;
 const VIRT_HEIGHT = 1000;
@@ -37,7 +38,6 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
 ));
 
 function startLevel(size = 11, lvl = 1) {
-  console.log("starting level: ", lvl, size);
   fooFrameRenderer.clear();
   gridKit = gridMaker(size, VIRT_WIDTH);
   gm = makeLevel(gridKit);

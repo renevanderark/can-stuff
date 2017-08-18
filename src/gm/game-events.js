@@ -1,8 +1,20 @@
-import { gameOverThought, salvationThought } from "./thoughts";
+import { gameOverThought, salvationThought, strayThought } from "./thoughts";
 
 function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
    onGameOver, onSolveLevel) {
+
+  let idleSecs = 0;
+  let strayThoughtInterval = setInterval(() => {
+     idleSecs++;
+     if (idleSecs >= 10 && !thoughtCloud.isVisible()) {
+       thoughtCloud.setTrainOfThoughtAndAppear(strayThought());
+       idleSecs = 0;
+     }
+  }, 1000);
+
+
   eventListeners.add("click", (ev, scale) => {
+    idleSecs = 0;
     thoughtCloud.disappear();
     gm.walls
       .map((w, wIdx) => ({w: w, wIdx: wIdx}))
@@ -18,13 +30,16 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
 
     if (!gridKit.gridSpaceIsFree(gm.walls, -1)(puppet.getPos())) {
       thoughtCloud.setTrainOfThoughtAndAppear([gameOverThought()]);
-      clearGameEvents(eventListeners);
+      clearInterval(strayThoughtInterval);
+      eventListeners.clear();
+
       window.setTimeout(onGameOver, 2500);
     }
 
   }, barLayer);
 
   eventListeners.add("contextmenu", (ev, scale) => {
+    idleSecs = 0;
     thoughtCloud.disappear();
     gm.walls
       .filter(w => w.isAt(
@@ -38,6 +53,7 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   })
 
   eventListeners.add("keypress", (ev, scale) => {
+    idleSecs = 0;
     thoughtCloud.disappear();
     puppet.clear(fooLayer.getContext('2d'), scale);
     switch (ev.keyCode) {
@@ -50,7 +66,10 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
     thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));
     if (gridKit.getX(puppet.getPos()) === 0 || gridKit.getY(puppet.getPos()) === 0 ||
         gridKit.getX(puppet.getPos()) === gridKit.SIZE - 1 || gridKit.getY(puppet.getPos()) === gridKit.SIZE - 1) {
-      clearGameEvents(eventListeners);
+
+      clearInterval(strayThoughtInterval);
+      eventListeners.clear();
+
       thoughtCloud.setTrainOfThoughtAndAppear([salvationThought()]);
       window.setTimeout(onSolveLevel, 1000);
     }
@@ -58,8 +77,5 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   });
 }
 
-function clearGameEvents(eventListeners) {
-  eventListeners.clear();
-}
 
-export { initGameEvents, clearGameEvents }
+export { initGameEvents }

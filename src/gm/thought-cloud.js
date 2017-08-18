@@ -12,6 +12,7 @@ export default function(VIRT_WIDTH) {
   };
 
   return {
+    isVisible: () => visible,
     followPuppet(virtX, virtY) {
       puppetPos = {x: virtX, y: virtY };
       updated = true;
