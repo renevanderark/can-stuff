@@ -48,7 +48,7 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
       return ev.preventDefault();
   })
 
-  eventListeners.add("keypress", (ev, scale) => {
+  eventListeners.add("keydown", (ev, scale) => {
     idleSecs = 0;
     thoughtCloud.disappear();
     switch (ev.keyCode) {
