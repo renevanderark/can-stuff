@@ -48,6 +48,7 @@ function startLevel(siz = 11, lvl = 1) {
       "left click to rotate my brain barriers...",
       "and right click to move the rotation point...",
       "of a brain barrier.",
+      "Press any key to suppress my thought bubble...",
       "Be careful not to squash me!"
     ]);
     isWelcome = false;

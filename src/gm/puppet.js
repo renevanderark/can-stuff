@@ -1,11 +1,13 @@
 export default (gridKit, walls) => {
   const { getP, getScreenPos, getGridSize, SIZE, getRect, getX, getY } = gridKit;
-  let pos = getP((SIZE - 1) / 2, (SIZE - 1) / 2)
+  let pos = getP((SIZE - 1) / 2, (SIZE - 1) / 2);
+  let lastPos = pos;
   let updated = true;
   return {
     getPos: () => pos,
     move(x, y) {
       let newPos = getP(getX(pos) + x, getY(pos) + y);
+      lastPos = pos;
       if (newPos > -1 && gridKit.gridSpaceIsFree(walls, -1)(newPos)) {
         pos = newPos;
       }
@@ -25,7 +27,7 @@ export default (gridKit, walls) => {
       updated = false;
     },
     clear(ctx, scale) {
-      ctx.clearRect(...getRect(pos, scale));
+      ctx.clearRect(...getRect(lastPos, scale));
     },
     forceUpdate() { updated = true; },
     updated: () => updated

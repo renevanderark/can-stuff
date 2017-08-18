@@ -14,8 +14,6 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
 
 
   eventListeners.add("click", (ev, scale) => {
-    idleSecs = 0;
-    thoughtCloud.disappear();
     gm.walls
       .map((w, wIdx) => ({w: w, wIdx: wIdx}))
       .filter(({w}) => w.isAt(
@@ -39,8 +37,6 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   }, barLayer);
 
   eventListeners.add("contextmenu", (ev, scale) => {
-    idleSecs = 0;
-    thoughtCloud.disappear();
     gm.walls
       .filter(w => w.isAt(
         ev.clientX - ev.target.offsetLeft,
@@ -55,7 +51,6 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   eventListeners.add("keypress", (ev, scale) => {
     idleSecs = 0;
     thoughtCloud.disappear();
-    puppet.clear(fooLayer.getContext('2d'), scale);
     switch (ev.keyCode) {
       case 37: puppet.move(-1, 0); break;
       case 38: puppet.move(0, -1); break;
