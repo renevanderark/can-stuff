@@ -1,7 +1,7 @@
 function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
    onGameOver, onSolveLevel) {
   eventListeners.add("click", (ev, scale) => {
-    thoughtCloud.disappear(barLayer.getContext('2d'));
+    thoughtCloud.disappear();
     gm.walls
       .map((w, wIdx) => ({w: w, wIdx: wIdx}))
       .filter(({w}) => w.isAt(
@@ -19,7 +19,7 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   }, barLayer);
 
   eventListeners.add("contextmenu", (ev, scale) => {
-    thoughtCloud.disappear(barLayer.getContext('2d'));
+    thoughtCloud.disappear();
     gm.walls
       .filter(w => w.isAt(
         ev.clientX - ev.target.offsetLeft,
@@ -32,7 +32,7 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   })
 
   eventListeners.add("keypress", (ev, scale) => {
-    thoughtCloud.disappear(barLayer.getContext('2d'));
+    thoughtCloud.disappear();
     puppet.clear(fooLayer.getContext('2d'), scale);
     switch (ev.keyCode) {
       case 37: puppet.move(-1, 0); break;

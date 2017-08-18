@@ -40,7 +40,14 @@ function startLevel(size = 11, lvl = 1) {
   gm = makeLevel(gridKit);
   puppet = makePuppet(gridKit, gm.walls);
   thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));
-
+  thoughtCloud.setTrainOfThoughtAndAppear([
+    "Welcome to my confused mind!",
+    "I have to find a way out!",
+    "Use the arrow keys to move me around...",
+    "left click to rotate my brain barriers...",
+    "and right click to move the rotation point...",
+    
+  ]);
   initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
     () => clearLevel(() => startLevel()), // onGameOver
     () => clearLevel(() => startLevel(size + 2, lvl + 1))  // onSolveLevel

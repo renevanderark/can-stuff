@@ -1,7 +1,15 @@
 export default function(VIRT_WIDTH) {
   let puppetPos = { x : 0 , y : 0 };
-  let updated = true, visible = true;
-  let currentText = "Welcome to my confused mind!";
+  let updated = true, visible = false;
+  let currentText = "...";
+  let timeouts = [];
+
+  const disappear = () => {
+    timeouts.forEach(t => clearTimeout(t));
+    visible = false;
+    updated = true;
+    currentText = "...";
+  };
 
   return {
     followPuppet(virtX, virtY) {
@@ -9,9 +17,17 @@ export default function(VIRT_WIDTH) {
       updated = true;
     },
 
-    disappear(ctx) {
-      visible = false;
-      updated = true;
+    disappear: disappear,
+
+    setTrainOfThoughtAndAppear(thoughts) {
+      const interval = 2500;
+      currentText = thoughts.shift();
+      timeouts.forEach(t => clearTimeout(t));
+      thoughts.forEach((t, i) => {
+        timeouts.push(setTimeout(() => {currentText = t; updated = true}, interval * (i+1)));
+      });
+      timeouts.push(setTimeout(disappear, (thoughts.length + 1) * interval))
+      visible = true;
     },
 
     draw(ctx, scale) {
@@ -31,13 +47,13 @@ export default function(VIRT_WIDTH) {
       ctx.stroke();
       ctx.restore();
       const targetAng = Math.atan2(cloudY - puppetPos.y, (cloudX / 2) -  puppetPos.x);
-      let ang = targetAng - 1;
+      let ang = targetAng - 1.5;
       const delta = Math.sqrt(Math.pow((cloudX / 2) - puppetPos.x, 2) + Math.pow(cloudY - puppetPos.y, 2));
       let x = puppetPos.x, y = puppetPos.y;
       for (let s = 0; s < 10; s++) {
-        ang += 0.1;
-        x += Math.cos(ang) * (delta * (s / 30)) * scale;
-        y += Math.sin(ang) * (delta * (s / 30)) * scale;
+        ang += 0.2;
+        x += Math.cos(ang) * (delta * (s / 70)) ;
+        y += Math.sin(ang) * (delta * (s / 70)) ;
         ctx.beginPath();
         ctx.arc(x * scale, y * scale, (s + 1) * scale, 2 * Math.PI, false);
         ctx.fill();
