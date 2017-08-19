@@ -34,18 +34,26 @@ export default function(gridKit) {
     };
 
     const drawStrokes = (ctx, scale, strokeStyle, redux = 0) => {
+      ctx.save();
+      const pivotScreenPos = getScreenPos(pivot, scale);
+      ctx.translate(...pivotScreenPos);
       ctx.beginPath();
       ctx.lineCap = 'round';
       ctx.strokeStyle = strokeStyle;
       ctx.lineWidth = Math.floor(getGridSize(scale) - (2*redux));
       wallSpaces.forEach((p, i) => {
         if (i === 0) {
-          ctx.moveTo(...(getScreenPos(p, scale).map(p => p - redux)));
+          ctx.moveTo(...(getScreenPos(p, scale)
+            .map((p, i) => p - pivotScreenPos[i])
+            .map(p => p - redux)));
         } else {
-          ctx.lineTo(...(getScreenPos(p, scale).map(p => p - redux)));
+          ctx.lineTo(...(getScreenPos(p, scale)
+            .map((p, i) => p - pivotScreenPos[i])
+            .map(p => p - redux)));
         }
       });
       ctx.stroke();
+      ctx.restore();
     };
 
     const drawPivot = (ctx, scale) => {
