@@ -45,6 +45,25 @@ export default function(gridKit) {
       });
       ctx.stroke();
     };
+
+    const drawPivot = (ctx, scale) => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.fillStyle = "rgb(96, 0, 0)";
+      ctx.translate(...getScreenPos(pivot, scale));
+      ctx.arc(-1, -1, getGridSize(scale) / 10, 0, 2 * Math.PI, false);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.strokeStyle = "rgb(196, 96, 96)";
+      const gridSize = getGridSize(scale);
+      ctx.lineWidth = Math.round(gridSize / 14);
+      ctx.moveTo(-1, -1);
+      ctx.lineTo(-3 * scale, -0.4 * gridSize * scale);
+
+      ctx.stroke();
+      ctx.restore();
+    }
+
     let currentRotation = determineCurrentRotation();
 
     return {
@@ -95,18 +114,7 @@ export default function(gridKit) {
         drawStrokes(ctx, scale, "rgba(128, 0, 0, 0.8)", 1);
         drawStrokes(ctx, scale, "rgb(196, 0, 0)", 2);
 
-        ctx.beginPath();
-        ctx.fillStyle = "rgb(96, 0, 0)";
-        ctx.arc(...(getScreenPos(pivot, scale).map(p => p - 1)), getGridSize(scale) / 10, 0, 2 * Math.PI, false);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.strokeStyle = "rgb(196, 96, 96)";
-        const gridSize = getGridSize(scale);
-        ctx.lineWidth = Math.round(gridSize / 14);
-        ctx.moveTo(...(getScreenPos(pivot, scale).map(p => p - 1)));
-        ctx.lineTo(...(getScreenPos(pivot, scale).map((p,i) => p - (i === 0 ? (3*scale) : (0.4*gridSize*scale)))));
-        ctx.stroke();
+        drawPivot(ctx, scale);
 
         updated = false;
       },
