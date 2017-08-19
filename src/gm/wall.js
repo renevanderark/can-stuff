@@ -113,7 +113,12 @@ export default function(gridKit) {
           }
         } while (currentRotation !== lastRotation);
 
-        animatingRotation = Math.abs(lastRotation - currentRotation) * -90;
+        animatingRotation = lastRotation < currentRotation
+          ? Math.abs(lastRotation - currentRotation) * -90
+          : lastRotation > currentRotation
+          ? Math.abs((lastRotation - 4) - currentRotation) * -90
+          : 0;
+        console.log(lastRotation, currentRotation, animatingRotation);
         updated = true;
         return currentRotation;
       },
