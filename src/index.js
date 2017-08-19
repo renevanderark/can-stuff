@@ -14,10 +14,11 @@ const VIRT_HEIGHT = 1000;
 
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
+const bazLayer = document.getElementById("baz-layer");
 
 const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barFrameRenderer = getFrameRenderer(barLayer.getContext('2d'), barLayer);
-
+const bazFrameRenderer = getFrameRenderer(bazLayer.getContext('2d'), barLayer);
 const eventListeners = getEventListeners();
 
 let gridKit;
@@ -26,21 +27,23 @@ let puppet = null;
 let thoughtCloud = makeThoughtCloud(VIRT_WIDTH);
 let isWelcome = true;
 
-initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
+initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer, bazLayer],
   eventListeners.onResize,
   fooFrameRenderer.onResize,
   barFrameRenderer.onResize,
+  bazFrameRenderer.onResize,
   () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate())
 ));
 
 setInterval(
-  () => gm.walls.forEach(w => w.animateRotation()),
-  5
+  () => gm.walls.forEach(w => w.animateRotation(bazFrameRenderer.clear)),
+  2
 )
 
 function startLevel(siz = 11, lvl = 1) {
   const size = siz > 51 ? 51 : siz;
   fooFrameRenderer.clear();
+  bazFrameRenderer.clear();
   gridKit = gridMaker(size, VIRT_WIDTH);
   gm = makeLevel(gridKit);
   puppet = makePuppet(gridKit, gm.walls);
@@ -73,8 +76,11 @@ function clearLevel(startNextLevel) {
 startLevel();
 
 const renderLoop = () => {
-  fooFrameRenderer.render([puppet].filter(p => p !== null).concat(gm.walls));
+  fooFrameRenderer.render([puppet]
+    .filter(p => p !== null)
+    .concat(gm.walls.filter(w => !w.isAnimating())));
   barFrameRenderer.render([thoughtCloud]);
+  bazFrameRenderer.render(gm.walls.filter(w => w.isAnimating()));
   requestAnimationFrame(renderLoop);
 }
 renderLoop();

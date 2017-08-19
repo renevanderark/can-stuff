@@ -29,6 +29,7 @@ export default function(VIRT_WIDTH) {
       });
       timeouts.push(setTimeout(disappear, (thoughts.length + 1) * interval))
       visible = true;
+      updated = true;
     },
 
     draw(ctx, scale) {

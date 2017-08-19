@@ -118,16 +118,14 @@ export default function(gridKit) {
           : lastRotation > currentRotation
           ? Math.abs((lastRotation - 4) - currentRotation) * -90
           : 0;
-        console.log(lastRotation, currentRotation, animatingRotation);
         updated = true;
         return currentRotation;
       },
-      animateRotation() {
-        if (animatingRotation > 0) {
-          animatingRotation--;
-          updated = true;
-        } else if (animatingRotation < 0) {
+      isAnimating: () => animatingRotation !== 0,
+      animateRotation(onFinished) {
+        if (animatingRotation < 0) {
           animatingRotation++;
+          if (animatingRotation === 0) { onFinished(); }
           updated = true;
         }
       },
@@ -140,6 +138,9 @@ export default function(gridKit) {
         updated = false;
       },
       clear(ctx, scale) {
+        if (animatingRotation !== 0) {
+          ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+        }
         wallSpaces.forEach(p => {
           ctx.clearRect(...getRect(p, scale).map((p, i) => i < 2 ? p - 1 : p + 1));
         });
