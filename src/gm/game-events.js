@@ -1,7 +1,7 @@
 import { gameOverThought, salvationThought, strayThought } from "./thoughts";
 
 function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
-   onGameOver, onSolveLevel) {
+   onGameOver, onSolveLevel, incrementMoves) {
 
   let idleSecs = 0;
   let strayThoughtInterval = setInterval(() => {
@@ -14,6 +14,9 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
 
 
   eventListeners.add("click", (ev, scale) => {
+    if (gm.walls.filter(w => w.isAnimating()).length > 0) {
+      return ev.preventDefault();
+    }
     gm.walls
       .map((w, wIdx) => ({w: w, wIdx: wIdx}))
       .filter(({w}) => w.isAt(
@@ -26,6 +29,8 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
         w.rotate(gridKit.gridSpaceIsFree(gm.walls, wIdx));
       });
 
+    incrementMoves();
+
     if (!gridKit.gridSpaceIsFree(gm.walls, -1)(puppet.getPos())) {
       thoughtCloud.setTrainOfThoughtAndAppear([gameOverThought()]);
       clearInterval(strayThoughtInterval);
@@ -37,6 +42,9 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
   }, barLayer);
 
   eventListeners.add("contextmenu", (ev, scale) => {
+    if (gm.walls.filter(w => w.isAnimating()).length > 0) {
+      return ev.preventDefault();
+    }
     gm.walls
       .filter(w => w.isAt(
         ev.clientX - ev.target.offsetLeft,
@@ -45,17 +53,18 @@ function initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer,
       ))
       .forEach(w => w.movePivot());
 
-      return ev.preventDefault();
+    incrementMoves();
+    return ev.preventDefault();
   })
 
   eventListeners.add("keydown", (ev, scale) => {
     idleSecs = 0;
     thoughtCloud.disappear();
     switch (ev.keyCode) {
-      case 37: puppet.move(-1, 0); break;
-      case 38: puppet.move(0, -1); break;
-      case 39: puppet.move(1, 0); break;
-      case 40: puppet.move(0, 1); break;
+      case 37: puppet.move(-1, 0); incrementMoves(); break;
+      case 38: puppet.move(0, -1); incrementMoves(); break;
+      case 39: puppet.move(1, 0); incrementMoves(); break;
+      case 40: puppet.move(0, 1); incrementMoves(); break;
     }
 
     thoughtCloud.followPuppet(...gridKit.getVirtPos(puppet.getPos()));

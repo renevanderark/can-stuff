@@ -15,6 +15,7 @@ const VIRT_HEIGHT = 1000;
 const fooLayer = document.getElementById("foo-layer");
 const barLayer = document.getElementById("bar-layer");
 const bazLayer = document.getElementById("baz-layer");
+const scores = document.getElementById("scores");
 
 const fooFrameRenderer = getFrameRenderer(fooLayer.getContext('2d'), fooLayer);
 const barFrameRenderer = getFrameRenderer(barLayer.getContext('2d'), barLayer);
@@ -26,13 +27,28 @@ let gm = {walls: []};
 let puppet = null;
 let thoughtCloud = makeThoughtCloud(VIRT_WIDTH);
 let isWelcome = true;
+let moves = 0;
 
 initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer, bazLayer],
   eventListeners.onResize,
   fooFrameRenderer.onResize,
   barFrameRenderer.onResize,
   bazFrameRenderer.onResize,
-  () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate())
+  () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate()),
+  (s, w, h) => {
+    const { innerWidth, innerHeight } = window;
+    if (innerWidth >= innerHeight) {
+      scores.style.left = w;
+      scores.style.width = innerWidth - w;
+      scores.style.height = h;
+      scores.style.top = 0;
+    } else {
+      scores.style.width = w;
+      scores.style.top = h;
+      scores.style.height = innerHeight - h;
+      scores.style.left = 0;
+    }
+  }
 ));
 
 setInterval(
@@ -42,6 +58,9 @@ setInterval(
 
 function startLevel(siz = 11, lvl = 1) {
   const size = siz > 51 ? 51 : siz;
+  moves = lvl === 1 ? 0 : moves;
+  document.getElementById("moves").innerHTML = moves;
+  document.getElementById("level").innerHTML = lvl;
   fooFrameRenderer.clear();
   bazFrameRenderer.clear();
   gridKit = gridMaker(size, VIRT_WIDTH);
@@ -63,7 +82,8 @@ function startLevel(siz = 11, lvl = 1) {
   }
   initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
     () => clearLevel(() => startLevel()), // onGameOver
-    () => clearLevel(() => startLevel(size + 2, lvl + 1))  // onSolveLevel
+    () => clearLevel(() => startLevel(size + 2, lvl + 1)),  // onSolveLevel
+    () => { document.getElementById("moves").innerHTML =  ++moves; }
   );
 }
 
