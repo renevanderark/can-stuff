@@ -29,6 +29,9 @@ let thoughtCloud = makeThoughtCloud(VIRT_WIDTH);
 let isWelcome = true;
 let moves = 0;
 
+const getHighScores = () => JSON.parse(localStorage.getItem("high-scores") || "[]");
+console.log(getHighScores());
+
 initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer, bazLayer],
   eventListeners.onResize,
   fooFrameRenderer.onResize,
