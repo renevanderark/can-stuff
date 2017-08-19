@@ -30,7 +30,20 @@ let isWelcome = true;
 let moves = 0;
 
 const getHighScores = () => JSON.parse(localStorage.getItem("high-scores") || "[]");
-console.log(getHighScores());
+
+const saveScore = (level, moves) => {
+  localStorage.setItem("high-scores", JSON.stringify(
+    getHighScores()
+      .concat([{level: level, moves: moves}])
+      .sort((a, b) => a.level > b.level
+        ? -1
+        : a.level < b.level
+          ? 1
+          : a.moves < b.moves ? -1 : 1
+      ).filter((x, i) => i < 10)
+    ));
+}
+
 
 initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer, bazLayer],
   eventListeners.onResize,
@@ -60,6 +73,7 @@ setInterval(
 )
 
 function startLevel(siz = 11, lvl = 1) {
+  console.log(getHighScores());
   const size = siz > 51 ? 51 : siz;
   moves = lvl === 1 ? 0 : moves;
   document.getElementById("moves").innerHTML = moves;
@@ -85,7 +99,7 @@ function startLevel(siz = 11, lvl = 1) {
   }
   initGameEvents(gm, puppet, gridKit, eventListeners, barLayer, fooLayer, thoughtCloud,
     () => clearLevel(() => startLevel()), // onGameOver
-    () => clearLevel(() => startLevel(size + 2, lvl + 1)),  // onSolveLevel
+    () => clearLevel(() => { saveScore(lvl, moves); startLevel(size + 2, lvl + 1); }),  // onSolveLevel
     () => { document.getElementById("moves").innerHTML =  ++moves; }
   );
 }
