@@ -6,7 +6,7 @@ export default function(gridKit) {
     let pivotIdx = Math.floor(Math.random() * initWallDims.length);
     let pivot = wallSpaces[pivotIdx];
     let updated = true;
-
+    let animatingRotation = 0;
     const getPivotPos = () => ({ x: getX(pivot), y: getY(pivot) });
 
     const rotateVec2 = (pivotPos, vec, rad) => ({
@@ -37,6 +37,7 @@ export default function(gridKit) {
       ctx.save();
       const pivotScreenPos = getScreenPos(pivot, scale);
       ctx.translate(...pivotScreenPos);
+      ctx.rotate(animatingRotation * Math.PI / 180)
       ctx.beginPath();
       ctx.lineCap = 'round';
       ctx.strokeStyle = strokeStyle;
@@ -112,10 +113,19 @@ export default function(gridKit) {
           }
         } while (currentRotation !== lastRotation);
 
+        animatingRotation = Math.abs(lastRotation - currentRotation) * -90;
         updated = true;
         return currentRotation;
       },
-
+      animateRotation() {
+        if (animatingRotation > 0) {
+          animatingRotation--;
+          updated = true;
+        } else if (animatingRotation < 0) {
+          animatingRotation++;
+          updated = true;
+        }
+      },
       draw(ctx, scale) {
         drawStrokes(ctx, scale, "rgba(96, 0, 0, 0.6)", 0);
         drawStrokes(ctx, scale, "rgba(128, 0, 0, 0.8)", 1);

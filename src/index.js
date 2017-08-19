@@ -33,6 +33,11 @@ initViewPort(VIRT_WIDTH, VIRT_HEIGHT, getResizeListeners([fooLayer, barLayer],
   () => [puppet].filter(p => p !== null).concat(thoughtCloud).concat(gm.walls).forEach(d => d.forceUpdate())
 ));
 
+setInterval(
+  () => gm.walls.forEach(w => w.animateRotation()),
+  5
+)
+
 function startLevel(siz = 11, lvl = 1) {
   const size = siz > 51 ? 51 : siz;
   fooFrameRenderer.clear();
