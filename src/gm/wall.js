@@ -34,6 +34,8 @@ export default function(gridKit) {
     };
 
     const drawStrokes = (ctx, scale, strokeStyle, redux = 0) => {
+      ctx.beginPath();
+      ctx.lineCap = 'round';
       ctx.strokeStyle = strokeStyle;
       ctx.lineWidth = Math.floor(getGridSize(scale) - (2*redux));
       wallSpaces.forEach((p, i) => {
@@ -59,7 +61,6 @@ export default function(gridKit) {
       ctx.lineWidth = Math.round(gridSize / 14);
       ctx.moveTo(-1, -1);
       ctx.lineTo(-3 * scale, -0.4 * gridSize * scale);
-
       ctx.stroke();
       ctx.restore();
     }
@@ -108,12 +109,9 @@ export default function(gridKit) {
       },
 
       draw(ctx, scale) {
-        ctx.beginPath();
-        ctx.lineCap = 'round';
         drawStrokes(ctx, scale, "rgba(96, 0, 0, 0.6)", 0);
         drawStrokes(ctx, scale, "rgba(128, 0, 0, 0.8)", 1);
         drawStrokes(ctx, scale, "rgb(196, 0, 0)", 2);
-
         drawPivot(ctx, scale);
 
         updated = false;
