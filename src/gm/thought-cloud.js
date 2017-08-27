@@ -60,9 +60,9 @@ export default function(VIRT_WIDTH) {
         ctx.arc(x * scale, y * scale, (s + 1) * scale, 2 * Math.PI, false);
         ctx.fill();
       }
-      ctx.font = `bold ${30 * scale}px sans-serif`;
+      ctx.font = `bold ${28 * scale}px sans-serif`;
 			ctx.fillStyle = "black";
-			ctx.fillText(currentText, (cloudX * scale) - (ctx.measureText(currentText).width / 2), (15 + cloudY) * scale);
+			ctx.fillText(currentText, (cloudX * scale) - (ctx.measureText(currentText).width / 2), (14 + cloudY) * scale);
       updated = false;
     },
     clear(ctx) {

@@ -18,6 +18,12 @@ const strayThoughts = [
   ["Stuck in the wheel of becoming..."],
   ["3.14", "3.141", "3.1415", "3.14159", "3.141592..."],
   ["These games always involve Pi...", "...but never 42...", "...or do they?"],
+  ["window.setInterval(() => thoughtCloud.setThought(strayThought()), 10000)"],
+  ["You think this game sucks?", "What about me, huh?", "I'm the one stuck in here!"],
+  ["We should e-mail the author of this game.", "Tell him what he did!", "Lost in confusion...", "...he must be insane."],
+  ["Just focus on following your breath"],
+  ["How much idle time do you think you have...", "...before I start yapping again?"],
+  ["What is the capital of Slovakia?", "What is the point of this game anyway?"],
 ];
 
 const randomThought = (ary) => ary[Math.floor(Math.random() * ary.length)];
